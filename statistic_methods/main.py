@@ -1,17 +1,13 @@
 import pandas as pd
 import numpy as np
-import math
 import matplotlib.pyplot as plt
-# import pylab
-import seaborn as sns
 
 # data loading
 station_data = pd.read_csv('wr213602.txt', sep=';', header=None,
                            names=['station_id', 'year', 'month', 'day', 'mean_temperature'])
 
 # data reformat
-station_data['date'] = station_data['year'].astype(str) + station_data['month'].astype(str) + station_data[
-    'day'].astype(str)
+station_data['date'] = station_data['year'].astype(str) + station_data['month'].astype(str) + station_data['day'].astype(str)
 station_data['date'] = pd.to_datetime(station_data['date'], format='%Y%m%d')
 
 # statistics
@@ -34,10 +30,9 @@ params = pd.DataFrame({'parameters': ['STATION', 'PERIOD', 'MEAN', 'MAX', 'MIN',
                                   round(range_temp, 1), round(std_temp, 1), round(std_temp ** 2, 1), round(cv, 2),
                                   round(asymm, 2), round(ex, 2)]})
 
-# params.to_csv('stat_params_summer_2022.csv', index=False)
+params.to_csv('stat_params_summer_2022.csv', index=False)
 
 # create figure contains graphs
-
 plt.figure(figsize=(8, 10))
 
 # AVG, STD, RANGE on graph
@@ -80,6 +75,7 @@ plt.title('Density cumulative hist')
 plt.xlabel('Temperature')
 plt.ylabel('Cumulative density')
 
+# MAX, MEAN, MIN
 plt.axvline(x=min_value, color='red', linestyle='--', linewidth=1, label='Extremes')
 plt.axvline(x=max_value, color='red', linestyle='--', linewidth=1)
 plt.axvline(x=mean_value, color='green', linestyle='--', linewidth=1, label='Mean')
