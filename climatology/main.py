@@ -1,8 +1,13 @@
 # climate row is from jan 1892 to aug 2023
 # 12 months and annual values
+import os
+
+# pip install openpyxl
+# pip install XlsxWriter
 
 import pandas as pd
 import numpy as np
+from pandas import ExcelWriter
 
 # years row creating -> dataframe
 years_list = list(range(1892, 2023 + 1))
@@ -69,16 +74,27 @@ for month in months:
         else:
             mark = None
 
-        statistic_dict[month] = {"Nulls_count": nulls_count,
-                                 "Max": max_value,
-                                 "Min": min_value,
-                                 "Average": round(avg, 1),
-                                 "STD": round(std_temp, 1),
-                                 "Dixon": {"TO_MAX": {"D1": d1_max, "D2": d2_max, "D3": d3_max,
-                                                      "D4": d4_max, "D5": d5_max},
-                                           "TO_MIN": {"D1": d1_min, "D2": d2_min,
-                                                      "D3": d3_min, "D4": d4_min, "D5": d5_min}},
-                                 "Smirnov-Grabbs": {"SG_MAX": sg_max, "SG_MIN": sg_min},
-                                 "Mark": mark}
-# print(values)
-print(statistic_dict)
+        statistic_df = pd.DataFrame([["Nulls_count", nulls_count, None, None],
+                                     ["Max", max_value, None, None],
+                                     ["Min", min_value, None, None],
+                                     ["Average", round(avg, 1), None, None],
+                                     ["STD", round(std_temp, 1), None, None],
+                                     ["Dixon", None, None, None],
+                                     ["TO MAX", None, "TO MIN", None],
+                                     ["D1", d1_max, "D1", d1_min],
+                                     ["D2", d2_max, "D2", d2_min],
+                                     ["D3", d3_max, "D3", d3_min],
+                                     ["D4", d4_max, "D4", d4_min],
+                                     ["D5", d5_max, "D5", d5_min],
+                                     ["Smirnov-Grabbs", None, None, None],
+                                     ["SG_MAX", sg_max, "SG_MIN", sg_min],
+                                     ["Mark", mark, None, None]])
+
+        with pd.ExcelWriter('statistic_params.xlsx', engine="openpyxl",
+                            mode="a" if os.path.exists('statistic_params.xlsx') else "w") as writer:
+            statistic_df.to_excel(writer, sheet_name=month)
+
+    else:
+        print(f"Большое количество пропусков: {round(nulls_percentage, 2)}% в ряду {month}, восстановите значения, либо"
+              f" измените порог nulls_percentage")
+
